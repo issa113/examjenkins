@@ -1,13 +1,12 @@
-FROM openjdk:11-jre-slim
+# Étape 1 : build Maven
+FROM maven:3.9-eclipse-temurin-17 AS builder
+WORKDIR /build
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Set working directory
+# Étape 2 : image definitive
+FROM openjdk:17-jdk-slim
 WORKDIR /app
-
-# Copy the built JAR file
-COPY target/demo-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose the port your Spring Boot app runs on
-EXPOSE 8080
-
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY --from=builder /build/target/*.jar app.jar
+EXPOSE 8083
+ENTRYPOINT ["java", "-jar", "app.jar"]
