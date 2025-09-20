@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('jekinstk')  // ton ID credentials Jenkins
-        DOCKER_HUB_REPO = "issa113/jenkinsjv"            // ⚠️ mets bien ton user Docker Hub ici
+        DOCKER_HUB_CREDENTIALS = credentials('jekinstk')  
+        DOCKER_HUB_REPO = "issa113/jenkinsjv"   // ⚠️ mets ton user DockerHub + repo
     }
 
     stages {
