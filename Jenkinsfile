@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_HUB_REPO = "issa293/examjenkins"  
-        GIT_REPO = "https://github.com/issa113/jenkinsjv.git"
+        GIT_REPO = "https://github.com/issa113/examjenkins.git"  // ← CORRIGÉ ICI
     }
 
     stages {
@@ -28,7 +28,7 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub-creds',  // ← NOUVEAU ID
+                    credentialsId: 'docker-hub-creds',  // ← Votre nouveau credentials
                     usernameVariable: 'DOCKER_USER', 
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
