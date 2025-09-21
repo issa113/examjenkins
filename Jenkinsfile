@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('jekinstk')  
-        DOCKER_HUB_REPO = "issa113/jenkinsjv"   // ⚠️ mets ton user DockerHub + repo
+        DOCKER_HUB_REPO = "issa293/examjenkins"  
+        GIT_REPO = "https://github.com/issa113/jenkinsjv.git"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/issa113/examjenkins.git'
+                git branch: 'main', url: "${env.GIT_REPO}"
             }
         }
 
@@ -27,7 +27,15 @@ pipeline {
 
         stage('Login to Docker Hub') {
             steps {
-                bat "docker login -u %DOCKER_HUB_CREDENTIALS_USR% -p %DOCKER_HUB_CREDENTIALS_PSW%"
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-creds',  // ← NOUVEAU ID
+                    usernameVariable: 'DOCKER_USER', 
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    bat """
+                        echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                    """
+                }
             }
         }
 
