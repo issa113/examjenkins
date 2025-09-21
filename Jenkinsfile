@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_HUB_REPO = "issa293/examjenkins"  
-        GIT_REPO = "https://github.com/issa113/examjenkins.git"  // ← CORRIGÉ ICI
+        GIT_REPO = "https://github.com/issa113/examjenkins.git"  
     }
 
     stages {
@@ -28,7 +28,7 @@ pipeline {
         stage('Login to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub-creds',  // ← Votre nouveau credentials
+                    credentialsId: 'docker-hub-creds',  
                     usernameVariable: 'DOCKER_USER', 
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
@@ -42,6 +42,18 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 bat "docker push %DOCKER_HUB_REPO%:latest"
+            }
+        }
+
+        stage('Deploy to Render') {
+            steps {
+                withCredentials([string(credentialsId: 'render-api-key', variable: 'RENDER_API_KEY')]) {
+                    bat """
+                        curl -X POST "https://api.render.com/v1/services/srv-d381u7ruibrs739fcoug/deploys" ^
+                        -H "Authorization: Bearer %RENDER_API_KEY%" ^
+                        -H "Content-Type: application/json"
+                    """
+                }
             }
         }
     }
