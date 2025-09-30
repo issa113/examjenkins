@@ -1,31 +1,18 @@
-# Étape 1 : builder
-FROM maven:3.9-eclipse-temurin-17 AS builder
+FROM openjdk:11-jdk-slim
 
 WORKDIR /app
 
-# Copier seulement le pom.xml pour profiter du cache
 COPY pom.xml .
+COPY mvnw .
+COPY .mvn .mvn
 
-# Pré-télécharger les dépendances
-RUN mvn dependency:go-offline -B
+RUN ./mvnw dependency:go-offline
 
-# Copier le code source
-COPY src ./src
+COPY src src
+RUN ./mvnw package -DskipTests
 
-# Compiler le projet
-RUN mvn clean package -DskipTests -B
-
-# Étape 2 : image finale
-FROM openjdk:17-jdk-slim
-
-WORKDIR /app
-
-# Copier le jar depuis l'étape builder
-COPY --from=builder /app/target/*.jar app.jar
-
-
-# Exposer le port si besoin
+# Port fixe 8080
 EXPOSE 8080
 
-# Commande de démarrage
-ENTRYPOINT ["java","-jar","app.jar"]
+# Utiliser le port de Render ou 8080 par défaut
+CMD ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar target/*.jar"]
