@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = "issa293/examjenkins"  
+        DOCKER_HUB_REPO = "issa293/examjenkins"
         GIT_REPO = "https://github.com/issa113/examjenkins.git"  
     }
 
